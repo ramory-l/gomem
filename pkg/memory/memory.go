@@ -1,6 +1,8 @@
 package memory
 
 import (
+	"encoding/binary"
+	"fmt"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -23,4 +25,16 @@ func ReadBytes(handle windows.Handle, address uintptr, size uintptr) ([]byte, er
 		return nil, err
 	}
 	return buffer[:bytesRead], nil
+}
+
+func ReadInt(handle windows.Handle, address uintptr) (int32, error) {
+	bytes, err := ReadBytes(handle, address, 4)
+	if err != nil {
+		return 0, err
+	}
+	if len(bytes) < 4 {
+		return 0, fmt.Errorf("expected to read 4 bytes, got %d", len(bytes))
+	}
+	val := int32(binary.LittleEndian.Uint32(bytes))
+	return val, nil
 }
