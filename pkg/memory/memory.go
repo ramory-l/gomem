@@ -50,3 +50,18 @@ func ReadUint(handle windows.Handle, address uintptr) (uint32, error) {
 	val := binary.LittleEndian.Uint32(bytes)
 	return val, nil
 }
+
+func WriteBytes(handle windows.Handle, address uintptr, data []byte, size uintptr) (bool, error) {
+	var bytesWritten uintptr
+	err := windows.WriteProcessMemory(handle, address, &data[0], size, &bytesWritten)
+	if err != nil {
+		return false, fmt.Errorf("write process memory failed: %w", err)
+	}
+	return bytesWritten == size, nil
+}
+
+func WriteUint(handle windows.Handle, address uintptr, value uint32) (bool, error) {
+	data := make([]byte, 4)
+	binary.LittleEndian.PutUint32(data, value)
+	return WriteBytes(handle, address, data, uintptr(len(data)))
+}
