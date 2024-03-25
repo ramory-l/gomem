@@ -30,11 +30,23 @@ func ReadBytes(handle windows.Handle, address uintptr, size uintptr) ([]byte, er
 func ReadInt(handle windows.Handle, address uintptr) (int32, error) {
 	bytes, err := ReadBytes(handle, address, 4)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("memory read error at address %x: %w", address, err)
 	}
 	if len(bytes) < 4 {
 		return 0, fmt.Errorf("expected to read 4 bytes, got %d", len(bytes))
 	}
 	val := int32(binary.LittleEndian.Uint32(bytes))
+	return val, nil
+}
+
+func ReadUint(handle windows.Handle, address uintptr) (uint32, error) {
+	bytes, err := ReadBytes(handle, address, 4)
+	if err != nil {
+		return 0, fmt.Errorf("memory read error at address %x: %w", address, err)
+	}
+	if len(bytes) < 4 {
+		return 0, fmt.Errorf("expected to read 4 bytes, got %d", len(bytes))
+	}
+	val := binary.LittleEndian.Uint32(bytes)
 	return val, nil
 }
