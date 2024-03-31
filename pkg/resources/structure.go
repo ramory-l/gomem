@@ -87,11 +87,11 @@ type MODULEINFO struct {
 	windows.ModuleInfo
 }
 
-func (mi *MODULEINFO) Name(processHandle windows.Handle) (string, error) {
+func (mi *MODULEINFO) Name(processHandle *windows.Handle) (string, error) {
 	var moduleName [windows.MAX_PATH]uint16
 	moduleNamePtr := &moduleName[0]
 	size := uint32(len(moduleName) * int(unsafe.Sizeof(moduleName[0])))
-	err := windows.GetModuleBaseName(processHandle, windows.Handle(mi.BaseOfDll), moduleNamePtr, size)
+	err := windows.GetModuleBaseName(*processHandle, windows.Handle(mi.BaseOfDll), moduleNamePtr, size)
 	if err != nil {
 		return "", fmt.Errorf("failed to get module base name, err: %w", err)
 	}
