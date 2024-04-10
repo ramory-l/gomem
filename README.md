@@ -1,5 +1,5 @@
 # Gomem
-A Go library to manipulate Windows processes
+A Go library to manipulate Windows processes (Pymem alternative for Go)
 
 ## Documentation
 In progress...
