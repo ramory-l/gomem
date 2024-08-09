@@ -16,7 +16,7 @@ type Gomem struct {
 	IsWow64       bool
 }
 
-func NewGomem(processId interface{}, desiredAccess *uint32) (*Gomem, error) {
+func NewGomem[T uint32 | string](processId T, desiredAccess *uint32) (*Gomem, error) {
 	var err error
 	gm := &Gomem{}
 
