@@ -17,18 +17,16 @@ func PatternScanModule(gm *memory.Gomem, module resources.MODULEINFO, pattern st
 	var pageAddress *uintptr = &baseAddress
 	var found []uintptr
 
-	if !returnMultiple {
-		for *pageAddress < maxAddress {
-			pageAddress, found, err = scanPatternPage(gm, *pageAddress, pattern, returnMultiple)
-			if err != nil {
-				return nil, fmt.Errorf("failed to scan page, err: %w", err)
-			}
+	for *pageAddress < maxAddress {
+		pageAddress, found, err = scanPatternPage(gm, *pageAddress, pattern, returnMultiple)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan page, err: %w", err)
+		}
 
-			if found != nil {
-				results = append(results, found...)
-				if !returnMultiple {
-					break
-				}
+		if found != nil {
+			results = append(results, found...)
+			if !returnMultiple {
+				break
 			}
 		}
 	}
@@ -50,7 +48,7 @@ func scanPatternPage(gm *memory.Gomem, address uintptr, pattern string, returnMu
 		resources.MEMORY_PROTECTION_PAGE_READONLY,
 	}
 
-	if mbi.State != uint32(resources.MEMORY_STATE_MEM_COMMIT) || slices.Contains(allowedProtections, mbi.Protect) {
+	if mbi.State != uint32(resources.MEMORY_STATE_MEM_COMMIT) || !slices.Contains(allowedProtections, mbi.Protect) {
 		return &nextRegion, nil, nil
 	}
 
